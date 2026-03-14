@@ -1,0 +1,15 @@
+# Spring Boot
+target/
+
+# H2 Database
+data/
+*.mv.db
+*.trace.db
+
+# IDE
+.metadata/
+.idea/
+.vscode/
+
+# Logs
+*.log

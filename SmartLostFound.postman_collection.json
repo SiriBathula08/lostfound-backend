@@ -1,0 +1,324 @@
+{
+  "info": {
+    "name": "SmartLostFound API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token",   "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"Test1234\",\n  \"fullName\": \"Test User\",\n  \"phoneNumber\": \"9999999999\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "if (res.data && res.data.accessToken) {",
+                "  pm.collectionVariables.set('token', res.data.accessToken);",
+                "  console.log('Token saved!');",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Test1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Items",
+      "item": [
+        {
+          "name": "Get All Items (Public)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/items?page=0&size=10",
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" },
+                { "key": "type", "value": "LOST", "disabled": true },
+                { "key": "category", "value": "Electronics", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/items/search?q=wallet",
+              "query": [{ "key": "q", "value": "wallet" }]
+            }
+          }
+        },
+        {
+          "name": "Get Item By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/items/1"
+          }
+        },
+        {
+          "name": "Get Item Stats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/items/stats"
+          }
+        },
+        {
+          "name": "Post Lost Item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/items",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "item",
+                  "value": "{\"title\":\"Lost Black Wallet\",\"description\":\"Lost near city mall, contains ID cards\",\"category\":\"Accessories\",\"type\":\"LOST\",\"locationName\":\"City Mall, Hyderabad\",\"locationLat\":17.3850,\"locationLng\":78.4867,\"dateOccurred\":\"2026-03-10\",\"color\":\"black\",\"brand\":\"Levis\",\"rewardAmount\":500}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Post Found Item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/items",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "item",
+                  "value": "{\"title\":\"Found Wallet Near Mall\",\"description\":\"Found a black wallet near city mall entrance\",\"category\":\"Accessories\",\"type\":\"FOUND\",\"locationName\":\"City Mall Entrance, Hyderabad\",\"locationLat\":17.3855,\"locationLng\":78.4870,\"dateOccurred\":\"2026-03-10\",\"color\":\"black\"}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get My Items",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/items/mine"
+          }
+        },
+        {
+          "name": "Get Item Matches",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/items/1/matches?limit=5"
+          }
+        },
+        {
+          "name": "Update Item Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/1/status?status=RESOLVED",
+              "query": [{ "key": "status", "value": "RESOLVED" }]
+            }
+          }
+        },
+        {
+          "name": "Delete Item",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/items/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Claims",
+      "item": [
+        {
+          "name": "Submit Claim",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/claims",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "claim",
+                  "value": "{\"itemId\":1,\"description\":\"This is my wallet. It has a Levis logo and contains my Aadhar card and 2 bank cards.\"}",
+                  "type": "text",
+                  "contentType": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get My Claims",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/claims/mine"
+          }
+        },
+        {
+          "name": "Get Claims For Item (Owner)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/claims/item/1"
+          }
+        },
+        {
+          "name": "Approve Claim",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/claims/1/review?approve=true&notes=Identity verified",
+              "query": [
+                { "key": "approve", "value": "true" },
+                { "key": "notes",   "value": "Identity verified" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reject Claim",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/claims/1/review?approve=false&notes=Proof not sufficient",
+              "query": [
+                { "key": "approve", "value": "false" },
+                { "key": "notes",   "value": "Proof not sufficient" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Withdraw Claim",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/claims/1/withdraw"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/admin/stats"
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/admin/users"
+          }
+        },
+        {
+          "name": "Toggle User Active",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/admin/users/1/toggle"
+          }
+        },
+        {
+          "name": "Change User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/1/role?role=ADMIN",
+              "query": [{ "key": "role", "value": "ADMIN" }]
+            }
+          }
+        },
+        {
+          "name": "Get All Items (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/admin/items"
+          }
+        },
+        {
+          "name": "Update Item Status (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/items/1/status?status=ARCHIVED",
+              "query": [{ "key": "status", "value": "ARCHIVED" }]
+            }
+          }
+        },
+        {
+          "name": "Get All Claims (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/claims?status=PENDING",
+              "query": [{ "key": "status", "value": "PENDING" }]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
