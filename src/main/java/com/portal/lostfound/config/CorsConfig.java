@@ -20,8 +20,10 @@ public class CorsConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "http://127.0.0.1:5173"
+                "http://127.0.0.1:5173",
+                "https://traceback-frontend-qend.onrender.com"
         ));
+
         config.setAllowedHeaders(Arrays.asList(
                 "Origin",
                 "Content-Type",
@@ -29,9 +31,11 @@ public class CorsConfig {
                 "Authorization",
                 "X-Requested-With"
         ));
+
         config.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
         ));
+
         config.setExposedHeaders(List.of("Authorization"));
         config.setMaxAge(3600L);
 
