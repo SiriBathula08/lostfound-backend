@@ -21,26 +21,18 @@ public class CorsConfig {
                 "http://localhost:5173",
                 "http://localhost:3000",
                 "http://127.0.0.1:5173",
-                "https://traceback-frontend-qend.onrender.com"
+                "https://traceback-frontend-qend.onrender.com",
+                "https://lostfound-backend-8u9x.onrender.com"
         ));
-
-        config.setAllowedHeaders(Arrays.asList(
-                "Origin",
-                "Content-Type",
-                "Accept",
-                "Authorization",
-                "X-Requested-With"
-        ));
-
+        config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
         ));
-
         config.setExposedHeaders(List.of("Authorization"));
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/**", config);
 
         return new CorsFilter(source);
     }
